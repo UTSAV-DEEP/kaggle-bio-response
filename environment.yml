@@ -9,6 +9,7 @@ dependencies:
  - seaborn
  - click
  - openpyxl
+ - keras
  - pip:
    - watermark
    - pytest

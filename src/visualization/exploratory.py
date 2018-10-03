@@ -15,6 +15,7 @@ from src.commons import constants
 def exploratory_visualization(dframe):
     sns.set(rc={'figure.figsize': (6, 70)})
     print(dframe.corr()['Activity'])
+    print(preprocess.get_headers(dframe))
     return sns.barplot(dframe.corr()['Activity'], preprocess.get_headers(dframe)).get_figure()
 
 

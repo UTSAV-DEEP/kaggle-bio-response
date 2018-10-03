@@ -27,17 +27,16 @@ def preprocess_data(dframe):
     dframe = dframe.copy()
     dframe = dframe.loc[:, dframe.std() > .01]
     dframe = dframe.loc[:, abs(dframe.corr()[constants.RESULT_COLUMN_NAME]) > .05]
-    label = get_label(dframe)
     features = get_featues(dframe)
+    print(get_headers(dframe))
     # features = preprocessing.StandardScaler().fit_transform(features)
     # pca = PCA(0.95)
     # pca.fit(features)
     # features=pca.transform(features)
     min_max_scaler = preprocessing.MinMaxScaler()
-    x_scaled = min_max_scaler.fit_transform(features)
-    features = pd.DataFrame(x_scaled)
-    features.insert(0,constants.RESULT_COLUMN_NAME,label)
-    return features
+    dframe[get_headers(dframe)[1:]] = min_max_scaler.fit_transform(dframe[get_headers(dframe)[1:]])
+    print(dframe.describe())
+    return dframe
 
 
 def read_processed_data(fname=constants.PROCESSED_DATA_FILE):
@@ -79,7 +78,7 @@ def main(input_file, output_file, excel):
     print('Preprocessing data')
 
     dframe = read_raw_data(input_file)
-
+    dframe.to_pickle(constants.RAW_DATA_PICKLE)
 
     dframe = preprocess_data(dframe)
 

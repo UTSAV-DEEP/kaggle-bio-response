@@ -2,4 +2,4 @@
 figures/
 /models/
 *.pyc
-.idea/
+.idea

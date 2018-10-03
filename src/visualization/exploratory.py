@@ -1,22 +1,19 @@
 import click
 import matplotlib
-import pandas as pd
-import numpy as np
-
-import matplotlib.pyplot as plot
 
 matplotlib.use('agg')
 import seaborn as sns
+import sys
 
+sys.path.append('src')
 from src.data import preprocess
 from src.commons import constants
 
 
 def exploratory_visualization(dframe):
-    sns.set(rc={'figure.figsize': (6, 70)})
-    print(dframe.corr()['Activity'])
-    print(preprocess.get_headers(dframe))
-    return sns.barplot(dframe.corr()['Activity'], preprocess.get_headers(dframe)).get_figure()
+    sns.set(rc={'figure.figsize': (6, 50)})
+    sns.set(font_scale=0.6)
+    return sns.barplot(dframe.corr()[constants.RESULT_COLUMN_NAME], preprocess.get_headers(dframe)).get_figure()
 
 
 @click.command()

@@ -1,45 +1,30 @@
-
+import os
+import sys
 
 import click
-import numpy as np
-import os
-
-from sklearn import metrics
 import matplotlib.pyplot as plt
+import numpy as np
+from sklearn import metrics
 
+sys.path.append('src')
 from src.models.random_forest import RandomForestModel
 from src.models.logistic_regression import LogisticRegressionModel
 from src.models.svm import SVM
 from src.models.keras_nn import KerasNN
 
-
 from src.data import preprocess
 from src.commons import constants
 
 
-def plot_roc_curve(np_actual, np_predicted):
-    fpr, tpr, thresholds = metrics.roc_curve(np_actual, np_predicted)
-    plt.plot(fpr, tpr, 'r-', label='trained model')
-    plt.plot([0, 1], [0, 1], 'k-', label='random')
-    plt.plot([0, 0, 1, 1], [0, 1, 1, 1], 'g-', label='perfect')
-    plt.legend()
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.show()
-
-
 def print_evaluation_metrics(actual_labels, predicted_labels):
-    np_actual=np.array(actual_labels)
-    np_predicted=np.array(predicted_labels)
+    np_actual = np.array(actual_labels)
+    np_predicted = np.array(predicted_labels)
 
-    print(metrics.confusion_matrix(np_actual, np_predicted))
-    print(metrics.classification_report(np_actual, np_predicted))
-    """print(metrics.accuracy_score(np_actual, np_predicted))
-    print(metrics.recall_score(np_actual, np_predicted))
-    print(metrics.precision_score(np_actual, np_predicted))
-    print(metrics.f1_score(np_actual, np_predicted))"""
-    print(metrics.roc_auc_score(np_actual, np_predicted))
-    plot_roc_curve(np_actual, np_predicted)
+    print("confusion_matrix:\n" + str(metrics.confusion_matrix(np_actual, np_predicted)))
+    print("classification_report:\n" + metrics.classification_report(np_actual, np_predicted))
+    print("accuracy_score: %.3f" % metrics.accuracy_score(np_actual, np_predicted))
+    print("roc_auc_score: %.3f" % metrics.roc_auc_score(np_actual, np_predicted))
+    print("log_loss: %.3f" % metrics.log_loss(np_actual, np_predicted))
 
 
 def get_model(model):
@@ -49,16 +34,35 @@ def get_model(model):
 
 
 def get_model_keras(model=KerasNN()):
-    model_file_pref=os.path.join(constants.PROJ_ROOT, 'models', model.name)
+    model_file_pref = os.path.join(constants.PROJ_ROOT, 'models', model.name)
     model.load(model_file_pref)
     return model
 
-def show_models_performances(models,test_x,test_y):
-    print('calculating improved model performance:')
+
+def show_models_performances(models, test_x, test_y, roc_file=constants.ROC_CURVES_PATH):
+    plt.grid(color='y', linestyle='-', linewidth=0.5)
+    plt.minorticks_on()
+    plt.grid(which='major', linestyle='-', linewidth='0.5', color='grey')
+    plt.grid(which='minor', linestyle=':', linewidth='0.5', color='grey')
+    plt.plot([0, 1], [0, 1], 'k-', label='random')
+    plt.plot([0, 0, 1, 1], [0, 1, 1, 1], 'g-', label='perfect')
+    colors = ['b-', 'r-', 'c-', 'm-', 'y-']
+    idx = 0
     for model in models:
-        print('Performance of '+model.name)
+        print('\nPerformance of ' + model.name)
         predicted_y = model.predict(test_x)
         print_evaluation_metrics(test_y, predicted_y)
+        np_actual = np.array(test_y)
+        np_predicted = np.array(predicted_y)
+        fpr, tpr, thresholds = metrics.roc_curve(np_actual, np_predicted)
+        plt.plot(fpr, tpr, colors[idx], label=model.name)
+        idx += 1
+
+    plt.legend()
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.savefig(roc_file)
+    plt.clf()
 
 
 def show_benchmark_model_performance():
@@ -68,10 +72,10 @@ def show_benchmark_model_performance():
 
     test_x = preprocess.get_featues(test)
     test_y = preprocess.get_label(test)
-    model=SVM()
-    model_file = os.path.join(constants.PROJ_ROOT, 'models','benchmark', model.name + '.model')
+    model = SVM()
+    model_file = os.path.join(constants.PROJ_ROOT, 'models', 'benchmark', model.name + '.model')
     model.load(model_file)
-    show_models_performances([model],test_x,test_y)
+    show_models_performances([model], test_x, test_y, roc_file=constants.BENCHMARK_ROC_PATH)
 
 
 @click.command()
@@ -86,11 +90,12 @@ def main(input_file):
 
     show_benchmark_model_performance()
 
+    print('\nCalculating other models performance:')
     show_models_performances([get_model(RandomForestModel()),
                               get_model(LogisticRegressionModel()),
                               get_model(SVM()),
                               get_model_keras()],
-                             test_x,test_y)
+                             test_x, test_y)
 
 
 if __name__ == '__main__':

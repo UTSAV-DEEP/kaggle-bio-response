@@ -1,7 +1,10 @@
+import sys
+
 import click
 import pandas as pd
+
+sys.path.append('src')
 from src.commons import constants
-from sklearn.decomposition import PCA
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 
@@ -30,10 +33,11 @@ def preprocess_data(dframe):
     features = get_featues(dframe)
     print(get_headers(dframe))
     # features = preprocessing.StandardScaler().fit_transform(features)
+    # dframe[get_headers(dframe)[1:]] = preprocessing.StandardScaler().fit_transform(dframe[get_headers(dframe)[1:]])
     # pca = PCA(0.95)
-    # pca.fit(features)
-    # features=pca.transform(features)
-    min_max_scaler = preprocessing.MinMaxScaler()
+    # pca.fit(dframe[get_headers(dframe)[1:]])
+    # dframe[get_headers(dframe)[1:]]=pd.DataFrame(pca.transform(dframe[get_headers(dframe)[1:]]))
+    min_max_scaler = preprocessing.StandardScaler()
     dframe[get_headers(dframe)[1:]] = min_max_scaler.fit_transform(dframe[get_headers(dframe)[1:]])
     print(dframe.describe())
     return dframe
@@ -55,7 +59,7 @@ def get_train_validation_test_split(dframe):
 
     train = train_validation.iloc[result[0]]
     validation = train_validation.iloc[result[1]]
-    return train,validation,test
+    return train, validation, test
 
 
 def get_train_test_split(dframe):
@@ -65,7 +69,7 @@ def get_train_test_split(dframe):
     train = dframe.iloc[result[0]]
     test = dframe.iloc[result[1]]
 
-    return train,test
+    return train, test
 
 
 @click.command()
@@ -86,12 +90,11 @@ def main(input_file, output_file, excel):
     if excel is not None:
         dframe.to_excel(excel)
 
-    train,validation,test = get_train_validation_test_split(dframe)
+    train, validation, test = get_train_validation_test_split(dframe)
 
     print(train.shape)
     print(validation.shape)
     print(test.shape)
-
 
 
 if __name__ == '__main__':

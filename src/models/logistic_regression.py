@@ -1,6 +1,8 @@
 import pickle
 from sklearn.linear_model import LogisticRegression
+import sys
 
+sys.path.append('src')
 from src.data.preprocess import get_featues, get_label
 
 

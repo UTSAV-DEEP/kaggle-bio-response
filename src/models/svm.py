@@ -1,13 +1,15 @@
 import pickle
 from sklearn.svm import SVC
+import sys
 
+sys.path.append('src')
 from src.data.preprocess import get_featues, get_label
 
 
 class SVM(object):
     def __init__(self):
         self.clf = SVC(probability=True)
-        self.name = 'svm'
+        self.name = 'SVM'
 
     def get_params(self):
         return self.clf.get_params()

@@ -57,51 +57,41 @@ Here is the project structure that also shows the processed data file, generated
 │   ├── RandomForest.model
 │   └── SVM.model
 ├── notebooks
-│   └── 00-initial-exploration.ipynb
+│   └── execution_report.ipynb
 ├── README.md
 ├── reports
-│   └── figures
-│       └── evaluation
-│           ├── benchmark_roc_curve.png
-│           └── roc_curves.png
+│   ├── capstone project report.docx
+│   ├── capstone project report.pdf
+│   ├── execution_report.html
+│   ├── figures
+│   │   ├── evaluation
+│   │   │   ├── benchmark_roc_curve.png
+│   │   │   └── roc_curves.png
+│   │   ├── processed_target_corr_plot.png
+│   │   └── raw_target_corr_plot.png
+│   └── model_performance.txt
 └── src
     ├── commons
     │   ├── constants.py
     │   ├── __init__.py
-    │   └── __pycache__
-    │       ├── constants.cpython-35.pyc
-    │       ├── constants.cpython-36.pyc
-    │       ├── __init__.cpython-35.pyc
-    │       └── __init__.cpython-36.pyc
     ├── data
     │   ├── __init__.py
     │   ├── preprocess.py
-    │   └── __pycache__
-    │       ├── __init__.cpython-35.pyc
-    │       └── preprocess.cpython-35.pyc
     ├── evaluation
     │   ├── __init__.py
-    │   └── model_performance.py
+    │   ├── model_performance.py
     ├── __init__.py
     ├── models
     │   ├── __init__.py
     │   ├── keras_nn.py
     │   ├── logistic_regression.py
-    │   ├── __pycache__
-    │   │   ├── __init__.cpython-35.pyc
-    │   │   ├── keras_nn.cpython-35.pyc
-    │   │   ├── logistic_regression.cpython-35.pyc
-    │   │   ├── random_forest.cpython-35.pyc
-    │   │   └── svm.cpython-35.pyc
     │   ├── random_forest.py
     │   ├── svm.py
     │   └── train_models.py
-    ├── __pycache__
-    │   ├── __init__.cpython-35.pyc
-    │   └── __init__.cpython-36.pyc
     └── visualization
         ├── exploratory.py
-        └── __init__.py
+        ├── __init__.py
+
 </pre>
 
 

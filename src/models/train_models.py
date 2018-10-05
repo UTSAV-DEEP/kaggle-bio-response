@@ -18,9 +18,9 @@ def train_save_model(model, dframe):
     model.save(model_file_name)
 
 
-def train_save_keras_model(train,validation):
+def train_save_keras_model(train, validation):
     model = KerasNN()
-    model.train(train,validation)
+    model.train(train, validation)
     model_file_pref = os.path.join(constants.PROJ_ROOT, 'models', model.name)
     model.save(model_file_pref)
 
@@ -32,24 +32,30 @@ def train_save_benchmark_model():
     model.train(train)
     model_file_name = os.path.join(constants.PROJ_ROOT, 'models', 'benchmark', model.name + '.model')
     model.save(model_file_name)
+    print('training benchmark (SVM) model completed.')
 
 
-@click.command()
-@click.argument('input_file', type=click.Path(exists=True, readable=True, dir_okay=False), required=False,
-                default=constants.PROCESSED_DATA_FILE)
-def main(input_file):
-    print('Training model')
-    train_save_benchmark_model()
-
-    dframe = preprocess.read_processed_data(input_file)
+def train_save_improved_models(dframe=None,processed_pickle_file=constants.PROCESSED_DATA_FILE):
+    if dframe is None:
+        dframe = preprocess.read_processed_data(processed_pickle_file)
 
     train, test = preprocess.get_train_test_split(dframe)
     train_save_model(RandomForestModel(), train)
     train_save_model(LogisticRegressionModel(), train)
     train_save_model(SVM(), train)
 
-    train,validation,test = preprocess.get_train_validation_test_split(dframe)
-    train_save_keras_model(train,validation)
+    train, validation, test = preprocess.get_train_validation_test_split(dframe)
+    train_save_keras_model(train, validation)
+    print('training improved models completed.')
+
+
+@click.command()
+@click.argument('input_file', type=click.Path(exists=True, readable=True, dir_okay=False), required=False,
+                default=constants.PROCESSED_DATA_FILE)
+def main(input_file):
+    print('Training models...')
+    train_save_benchmark_model()
+    train_save_improved_models(processed_pickle_file=input_file)
 
 
 if __name__ == '__main__':

@@ -21,7 +21,10 @@ class SVM(object):
 
     def predict(self, X):
         y_pred = self.clf.predict(X)
+        return y_pred
 
+    def predict_proba(self, X):
+        y_pred = self.clf.predict_proba(X)
         return y_pred
 
     def save(self, fname):

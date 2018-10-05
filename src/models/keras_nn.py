@@ -1,7 +1,8 @@
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.models import model_from_yaml
 import sys
+
+from keras.layers import Dense
+from keras.models import Sequential
+from keras.models import model_from_yaml
 
 sys.path.append('src')
 from src.data.preprocess import get_featues, get_label
@@ -11,7 +12,7 @@ class KerasNN(object):
     def __init__(self):
         self.clf = Sequential()
         self.clf.add(Dense(20, input_dim=518, activation='relu'))
-        self.clf.add(Dense(20, activation='relu'))
+        self.clf.add(Dense(20, activation='softmax'))
         self.clf.add(Dense(1, activation='sigmoid'))
         self.clf.compile(loss='binary_crossentropy', optimizer='adam')
         self.name = 'KerasNN'
@@ -21,11 +22,16 @@ class KerasNN(object):
         y = get_label(train)
         xv = get_featues(validation)
         yv = get_label(validation)
-        self.clf.fit(X, y, epochs=1000, verbose=0, validation_data=(xv,yv))
+        self.clf.fit(X, y, epochs=500, verbose=0, validation_data=(xv, yv))
 
     def predict(self, X):
         y_pred = self.clf.predict(X)
-        y_pred=(y_pred>0.5)*1
+        y_pred = (y_pred > 0.5) * 1
+        return y_pred
+
+    def predict_proba(self, X):
+        # this is done to overcome divide by zero error while calculating log_loss metric
+        y_pred = (self.clf.predict_proba(X)+0.00001)*0.9999
         return y_pred
 
     def save(self, fname):

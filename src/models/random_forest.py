@@ -9,7 +9,7 @@ from src.data.preprocess import get_featues, get_label
 
 class RandomForestModel(object):
     def __init__(self):
-        self.clf = RandomForestClassifier(n_estimators=50, max_depth=700)
+        self.clf = RandomForestClassifier(n_estimators=100, max_depth=1000)
         self.name = 'RandomForest'
 
     def get_params(self):
@@ -22,7 +22,10 @@ class RandomForestModel(object):
 
     def predict(self, X):
         y_pred = self.clf.predict(X)
+        return y_pred
 
+    def predict_proba(self, X):
+        y_pred = self.clf.predict_proba(X)
         return y_pred
 
     def save(self, fname):

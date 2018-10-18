@@ -7,7 +7,12 @@ RAW_DATA_FILE = os.path.join(PROJ_ROOT,'data', 'raw', 'train.csv')
 RAW_DATA_URL='https://www.kaggle.com/c/bioresponse/download/train.csv'
 RAW_DATA_PICKLE=os.path.join(PROJ_ROOT, 'data', 'raw', 'raw.pickle')
 
+
+RAW_TEST_FILE = os.path.join(PROJ_ROOT,'data', 'raw', 'test.csv')
+RAW_TEST_PICKLE=os.path.join(PROJ_ROOT, 'data', 'raw', 'test.pickle')
+
 PROCESSED_DATA_FILE=os.path.join(PROJ_ROOT, 'data', 'processed', 'processed.pickle')
+PROCESSED_TEST_FILE=os.path.join(PROJ_ROOT, 'data', 'processed', 'processed_test.pickle')
 
 RESULT_COLUMN_NAME='Activity'
 
@@ -16,3 +21,5 @@ PROCESSED_VISUALIZATION_OUTPUT_FILE=os.path.join(PROJ_ROOT, 'reports', 'figures'
 
 ROC_CURVES_PATH=os.path.join(PROJ_ROOT, 'reports', 'figures','evaluation', 'roc_curves.png')
 BENCHMARK_ROC_PATH=os.path.join(PROJ_ROOT, 'reports', 'figures','evaluation', 'benchmark_roc_curve.png')
+
+TEST_RESULT_CSV_DIR=os.path.join(PROJ_ROOT, 'data', 'external')

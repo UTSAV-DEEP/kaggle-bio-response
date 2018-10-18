@@ -105,19 +105,38 @@ def get_train_test_split(dframe):
     return train, test
 
 
+def get_test_dframe(fname=constants.RAW_TEST_FILE):
+    dframe = pd.read_csv(fname)
+    dframe.to_pickle(constants.RAW_TEST_PICKLE)
+    return dframe
+
+
+def preprocess_test_dframe(dframe,headers,out_file=constants.PROCESSED_DATA_FILE):
+    dframe = dframe.copy()
+    dframe = dframe[headers]
+    dframe[headers] = preprocessing.StandardScaler().fit_transform(dframe[headers])
+    # print(dframe.describe())
+
+    dframe.to_pickle(out_file)
+    return dframe
+
 
 @click.command()
 @click.argument('input_file', type=click.Path(exists=True, readable=True, dir_okay=False), required=False,
                 default=constants.RAW_DATA_FILE)
-@click.argument('output_file', type=click.Path(writable=True, dir_okay=False), required=False,
-                default=constants.PROCESSED_DATA_FILE)
+@click.argument('test_file', type=click.Path(exists=True, readable=True, dir_okay=False), required=False,
+                default=constants.RAW_TEST_FILE)
 @click.option('--excel', type=click.Path(writable=True, dir_okay=False))
-def main(input_file, output_file, excel):
+def main(input_file, test_file, excel):
     print('Preprocessing data')
 
     dframe = read_raw_data(input_file)
     print(dframe.head())
     dframe = preprocess_data(dframe,out_file=constants.PROCESSED_DATA_FILE)
+
+    headers=get_headers(dframe)[1:]
+    test_dframe = get_test_dframe(test_file)
+    test_dframe = preprocess_test_dframe(test_dframe,headers,out_file=constants.PROCESSED_TEST_FILE)
 
     if excel is not None:
         dframe.to_excel(excel)
